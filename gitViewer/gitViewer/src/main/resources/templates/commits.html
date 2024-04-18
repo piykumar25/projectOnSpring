@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Git Viewer</title>
+</head>
+<body>
+
+<h1>Git Viewer</h1>
+
+<div th:each="branch : ${branches}">
+    <h2 th:text="${branch.name}"></h2>
+    <ul>
+        <li th:each="commit : ${branch.commits}">
+            <span th:text="${commit.id}"></span> - <span th:text="${commit.message}"></span>
+            <span>afava</span>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>
