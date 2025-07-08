@@ -7,12 +7,9 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.data.RepositoryItemWriter;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -35,6 +32,12 @@ public class CsvBatchConfig {
 
     @Autowired
     CustomerRepository customerRepository;
+
+    @Autowired
+    JobRepository jobRepository;
+
+    @Autowired
+    PlatformTransactionManager transactionManager;
 
 
     // create Reader
@@ -84,35 +87,23 @@ public class CsvBatchConfig {
 
 
     // Create Writer
-//    @Bean
-//    public RepositoryItemWriter<Customer> customerWriter(){
-//        RepositoryItemWriter<Customer> repositoryItemWriter = new RepositoryItemWriter<>();
-//        repositoryItemWriter.setRepository(customerRepository);
-//        repositoryItemWriter.setMethodName("save");
-//        return repositoryItemWriter;
-//    }
-
     @Bean
-    public JdbcBatchItemWriter<Customer> jdbcBatchItemWriter(DataSource dataSource) {
-        JdbcBatchItemWriter<Customer> jdbcBatchItemWriter = new JdbcBatchItemWriter<>();
-        jdbcBatchItemWriter.setDataSource(dataSource);
-        jdbcBatchItemWriter.setSql("INSERT INTO CUSTOMER_INFO VALUES (:id, :firstName, :lastName, :email, :gender, :contactNo, :country, :dob)");
-        jdbcBatchItemWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        return jdbcBatchItemWriter;
+    public RepositoryItemWriter<Customer> customerWriter(){
+        RepositoryItemWriter<Customer> repositoryItemWriter = new RepositoryItemWriter<>();
+        repositoryItemWriter.setRepository(customerRepository);
+        repositoryItemWriter.setMethodName("save");
+        return repositoryItemWriter;
     }
-
 
     // Create Step
     @Bean
-    public Step step(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                     JdbcBatchItemWriter<Customer> jdbcBatchItemWriter) {
+    public Step step() {
         int chunkSize = 10;
         return new StepBuilder("step-1", jobRepository)
                 .<Customer, Customer>chunk(chunkSize, transactionManager)
                 .reader(customerReader())
                 .processor(customerProcessor())
-                .writer(jdbcBatchItemWriter)
-                .taskExecutor(taskExecutor())
+                .writer(customerWriter())
                 .build();
     }
 
@@ -121,8 +112,7 @@ public class CsvBatchConfig {
     public Job job(JobRepository jobRepository,
                    Step step) {
         return new JobBuilder("job", jobRepository)
-                .incrementer(new RunIdIncrementer())
-                .start(step)
+                .start(step())
                 .build();
     }
 
@@ -132,11 +122,5 @@ public class CsvBatchConfig {
         asyncTaskExecutor.setConcurrencyLimit(10);
         return asyncTaskExecutor;
     }
-
-
-
-
-
-
 
 }

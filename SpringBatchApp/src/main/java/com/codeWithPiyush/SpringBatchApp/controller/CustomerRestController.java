@@ -16,10 +16,10 @@ public class CustomerRestController {
 
     @Autowired
     private Job job;
-
     @GetMapping("/customers")
-    public void loadCsvToDb() throws Exception {
-        JobParameters jobParams = new JobParametersBuilder().addLong("Start-At", System.currentTimeMillis()).toJobParameters();
-        jobLauncher.run(job, jobParams);
+    public void loadCsvToDatabase() throws Exception {
+        long startAt = System.currentTimeMillis();
+        JobParameters jobParameters = new JobParametersBuilder().addLong("Start-At", startAt).toJobParameters();
+        jobLauncher.run(job, jobParameters);
     }
 }
