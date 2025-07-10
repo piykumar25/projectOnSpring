@@ -31,4 +31,13 @@ public class UserServiceImpl implements UserService {
                 .filter(user -> user.getId().equals(id))
                 .findFirst();
     }
+
+    @Override
+    public Optional<User> updateUser(Long id, User user) {
+        return getUserById(id).map(existingUser -> {
+            existingUser.setFirstName(user.getFirstName());
+            existingUser.setLastName(user.getLastName());
+            return existingUser;
+        });
+    }
 }

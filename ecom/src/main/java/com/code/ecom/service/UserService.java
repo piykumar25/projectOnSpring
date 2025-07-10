@@ -2,6 +2,7 @@ package com.code.ecom.service;
 
 import com.code.ecom.entity.User;
 
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,4 +13,6 @@ public interface UserService {
     User addUser(User user);
 
     Optional<User> getUserById(Long id);
+
+    Optional<User> updateUser(Long id, User user);
 }

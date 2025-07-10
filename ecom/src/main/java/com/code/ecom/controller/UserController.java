@@ -1,6 +1,5 @@
 package com.code.ecom.controller;
 
-
 import com.code.ecom.entity.User;
 import com.code.ecom.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,13 @@ public class UserController {
     @GetMapping("/api/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/api/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        return userService.updateUser(id, user)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
