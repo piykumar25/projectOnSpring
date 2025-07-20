@@ -1,6 +1,8 @@
 package com.code.ecom.service;
 
 import com.code.ecom.entity.User;
+import com.code.ecom.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -8,36 +10,32 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private List<User> userList = new ArrayList<>();
-    private Long nextId = 1L;
+    private final UserRepository userRepository;
 
     @Override
     public List<User> getAllUsers() {
-        return userList;
+        return userRepository.findAll();
     }
 
     @Override
     public User addUser(User user) {
-        user.setId(nextId++);
-        userList.add(user);
-        return user;
+        return userRepository.save(user);
     }
 
     @Override
     public Optional<User> getUserById(Long id) {
-        return userList.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst();
+        return userRepository.findById(id);
     }
 
     @Override
     public Optional<User> updateUser(Long id, User user) {
-        return getUserById(id).map(existingUser -> {
+        return userRepository.findById(id).map(existingUser -> {
             existingUser.setFirstName(user.getFirstName());
             existingUser.setLastName(user.getLastName());
-            return existingUser;
+            return userRepository.save(existingUser);
         });
     }
 }
