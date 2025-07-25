@@ -1,18 +1,18 @@
 package com.code.ecom.service;
 
-import com.code.ecom.entity.User;
+import com.code.ecom.dto.UserRequest;
+import com.code.ecom.dto.UserResponse;
 
-import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
-    List<User> getAllUsers();
+    List<UserResponse> getAllUsers();
 
-    User addUser(User user);
+    UserResponse addUser(UserRequest userRequest);
 
-    Optional<User> getUserById(Long id);
+    Optional<UserResponse> getUserById(Long id);
 
-    Optional<User> updateUser(Long id, User user);
+    Optional<UserResponse> updateUser(Long id, UserRequest userRequest);
 }
