@@ -17,7 +17,6 @@ public interface UserMapper {
     User toUser(UserRequest userRequest);
 
 
-    @Mapping(target = "id", ignore = true)
     UserResponse mapToUserResponse(User user);
 
     @Mapping(target = "id", ignore = true)

@@ -10,3 +10,20 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  info:
+     env:
+       enabled: true
+
+info:
+  app:
+    name: My New Ecommerce App
+    description: "My new ecommerce app description"
+    version: '1.0.0'
